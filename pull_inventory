@@ -8,6 +8,8 @@ import pprint
 password = getpass.getpass("Enter Switch Admin Password: ")
 switches = ["192.168.1.1", "192.268.1.2", "192.168.1.250"]
 errors = {}
+
+# connect to device. NOTE this uses 'admin' as the username
 for switch in switches:
         try:
                 node = pyeapi.connect(transport="https", host=switch, username="admin", password=password, port=None)

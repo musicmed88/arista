@@ -1,0 +1,39 @@
+#!/usr/local/bin/python2.7
+# importthe modules
+import pyeapi
+import getpass
+import pprint
+
+# get credentials and select devices by IP
+password = getpass.getpass("Enter Switch Admin Password: ")
+switches = ["192.168.1.1", "192.268.1.2", "192.168.1.250"]
+errors = {}
+for switch in switches:
+        try:
+                node = pyeapi.connect(transport="https", host=switch, username="admin", password=password, port=None)
+
+                version = node.execute(["show version"])
+                hostname = node.execute(["show hostname"])
+
+                print
+                print ("*******************************************************")
+                print ("Switch IP: %s") % (switch)
+                print ("Hostname: %s") % (hostname["result"][0]["hostname"])
+                print ("Model Name: %s") % (version["result"][0]["modelName"])
+                print ("Serial Number: %s") % (version["result"][0]["serialNumber"])
+                print ("EOS Version: %s") % (version["result"][0]["version"])
+                print ("*******************************************************")
+                print
+        except:
+                errors[switch] = "ConnectionError: unable to connect to eAPI"
+print ""
+print "*** NOTICE: Devices below this line are unreachable ***"
+print "_______________________________________________________"
+print ""
+print ""
+pprint.pprint(errors)
+print ""
+print ""
+print "*** Please check power and/or physical connections ***"
+print ""
+print ""

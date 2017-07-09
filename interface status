@@ -1,0 +1,42 @@
+#!/usr/local/bin/python2.7
+
+# import the modules
+import pyeapi
+import getpass
+import pprint
+
+# get credentials and devices
+password = getpass.getpass("Enter Switch Admin Password: ")
+switches = raw_input("Please enter the IP of the device you would like to check: ")
+
+# set interfaces to check
+interfaces = ["Ethernet1", "Ethernet2", "Ethernet3", "Ethernet4", "Ethernet5", "Ethernet6", "Ethernet7", "Ethernet8", "Ethernet9", "Ethernet10", "Ethernet11", "Ethernet12", "Ethernet13", "Ethernet14", "Ethernet15", "Ethernet16", "Ethernet17", "Ethernet18", "Ethernet19", "Ethernet20", "Ethernet21", "Ethernet22", "Ethernet23", "Ethernet24", "Ethernet25", "Ethernet26", "Ethernet27", "Ethernet28", "Ethernet29", "Ethernet30", "Ethernet31", "Ethernet32", "Ethernet33", "Ethernet34", "Ethernet35", "Ethernet36", "Ethernet37", "Ethernet38", "Ethernet39", "Ethernet40", "Ethernet41", "Ethernet42", "Ethernet43", "Ethernet44", "Ethernet45", "Ethernet46", "Ethernet47", "Ethernet48"]
+errors = {}
+
+# connect to device(s). NOTE this uses 'admin' as the username
+try:
+        node = pyeapi.connect(transport="https", host=switches, username="admin", password=password, port=None)
+# get information
+        version = node.execute(["show version"])
+        hostname = node.execute(["show hostname"])
+        status = node.execute(["show interfaces status"])
+        print
+        print ("*******************************************************")
+        print ("Switch IP: %s") % (switches)
+        print ("Hostname: %s") % (hostname["result"][0]["hostname"])
+        for interface in interfaces:
+                print (interface),
+                print ": DESCRIPTION -",
+                print (status["result"][0]["interfaceStatuses"][interface]["description"])
+                print "Status:",
+                print (status["result"][0]["interfaceStatuses"][interface]["linkStatus"])
+                print "Vlan:",
+                print (status["result"][0]["interfaceStatuses"][interface]["vlanInformation"]["vlanId"])
+                print (" ")
+        print ("*******************************************************")
+        print ("")
+except:
+        errors[switches] = "ConnectionError: unable to connect to eAPI"
+
+
+print "--SCRIPT COMPLETE--"
